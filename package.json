@@ -1,0 +1,59 @@
+{
+  "name": "ai-agent-sibabu",
+  "version": "1.0.0",
+  "description": "SI BABU — AI Agent CLI",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "debug": "DEBUG=true node main.js",
+    "crew": "node agent/crew/CrewCLI.js",
+    "crew:start": "node crew_ctl.js start",
+    "crew:stop": "node crew_ctl.js stop",
+    "crew:status": "node crew_ctl.js status",
+    "crew:add": "node crew_ctl.js add",
+    "crew:log": "node crew_ctl.js log",
+    "setup": "node setup.js",
+    "postinstall": "node -e \"console.log('✅ SI BABU terinstall!\\nEdit .env buat isi API key.\\nnpm start buat mulai.\")\"",
+    "update": "node -e \"require('./core/babu_update').applyUpdate()\"",
+    "build": "bash build.sh",
+    "check-update": "node -e \"const u = require('./core/babu_update'); const c = u.checkForUpdates(); console.log(c.updateAvailable ? 'Update available!' : 'Up to date')\"",
+    "telegram": "node gateway/telegram.js",
+    "gateway": "node gateway/telegram.js",
+    "whatsapp": "node gateway/whatsapp.js"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "dependencies": {
+    "axios": "^1.16.0",
+    "dotenv": "^17.4.2",
+    "express": "^4.22.2",
+    "node-fetch": "^3.3.2",
+    "node-html-parser": "^7.1.0",
+    "pdf-parse": "^2.4.5",
+    "sql.js": "^1.14.1",
+    "telegraf": "^4.16.3",
+    "uuid": "^9.0.1"
+  },
+  "bin": {
+    "sibabu": "./main.js"
+  },
+  "pkg": {
+    "assets": [
+      ".env.example",
+      "memory/.gitkeep",
+      "logs/.gitkeep"
+    ],
+    "targets": [
+      "node18-linux-arm64"
+    ],
+    "output": "bin/sibabu"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.3.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "prettier": "^3.8.3"
+  }
+}

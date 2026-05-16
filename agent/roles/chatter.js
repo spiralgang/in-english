@@ -1,0 +1,377 @@
+'use strict';
+const babuCache = require('../../core/babu_cache');
+const babuMind = require('../../core/babu_mind');
+const babuNavigasi = require('../../core/babu_navigasi');
+const babuEksplorasi = require('../../core/babu_eksplorasi');
+const babuUpdate = require('../../core/babu_update');
+const babuSadar = require('../../core/babu_sadar');
+
+const filesystem = require('../../tools/filesystem');
+const provider = require('../../provider/router');
+const { makeCasual } = require('../../utils/response_style');
+const { smartSearch, shouldBrowse } = require('../../utils/search_engine');
+const { isGreeting } = require('../chatter/greeting');
+const { getHistory } = require('../chatter/history');
+const { loadMemory } = require('../../utils/memory_engine');
+const {
+  isSelfQuery,
+  answerSelfQuery,
+} = require('../chatter/self_awareness');
+
+
+function isFilesystemRequest(input) {
+  if (
+    /\b(tampilkan|tampil|lihat|buka|baca|show)\s+[\w.\/-]+\.\w{1,5}\b/i.test(
+      input
+    )
+  )
+    return true;
+  return (
+    /\b(lihat|buka|baca|cek|ls|list|show|tampilkan|edit|hapus|delete)\b/i.test(
+      input
+    ) &&
+    /\b(file|folder|direktori|script|kode|project)\b|\.\w{1,5}\b/i.test(input)
+  );
+}
+
+function handleFilesystem(input) {
+  const home = filesystem.ALLOWED_ROOT;
+
+  const readMatch = input.match(
+    /(?:buka|baca|lihat|cek|show|tampil|tampilkan)\s+([\w.\/-]+\.\w{1,5})/i
+  );
+  if (readMatch) {
+    const filePath = readMatch[1].replace('~', home);
+    const absPath = require('path').resolve(home, filePath);
+    const result = filesystem.readFile(absPath);
+    if (result.error) return `File tidak ditemukan: ${filePath}`;
+    return `=== ${filePath} ===\n${result.content}`;
+  }
+
+  const listMatch = input.match(
+    /(?:lihat|ls|list|tampil|tampilkan)\s+(?:isi\s+)?([~\/][\w.\/\-]*|\.|\.\.)/i
+  );
+  if (listMatch) {
+    const dirPath = listMatch[1].replace('~', home);
+    const items = filesystem.listDir(dirPath);
+    if (items.error) return items.error;
+    return items
+      .map((i) => `${i.type === 'dir' ? 'D' : 'F'} ${i.name}`)
+      .join('\n');
+  }
+
+  if (/\b(ls|list|lihat folder|lihat file|apa aja|ada apa)\b/i.test(input)) {
+    const items = filesystem.listDir(home);
+    if (items.error) return items.error;
+    return (
+      'Home (~):\n' +
+      items.map((i) => `  ${i.type === 'dir' ? 'D' : 'F'} ${i.name}`).join('\n')
+    );
+  }
+
+  return null;
+}
+
+function isOpinionQuery(input) {
+  return (
+    /\b(menurut|pendapat|saran)\s+(lu|lo|kamu)\b/i.test(input) ||
+    /\b(bagus|jelek|worth|berat|ringan)\s+(ga|gak|ngga)\b/i.test(input)
+  );
+}
+
+async function run(ctx) {
+  // Special case for "tim lu siapa aja"
+  if (
+    ctx.input.toLowerCase().includes('tim lu') ||
+    ctx.input.toLowerCase().includes('team lu')
+  ) {
+    return {
+      ok: true,
+      output:
+        'Gue punya tim: Project Manager (PM), Architect, Builder, QA, dan Researcher. Mereka kerja bareng buat ngerjain task lo.',
+      role: 'chatter',
+    };
+  }
+
+  // ========== SELF AWARENESS (dynamic, not template) ==========
+  
+  // Cek apakah pertanyaan tentang SI BABU sendiri
+  const aboutSelf =
+    /(si babu|babu|lu|lo|kamu)/i.test(ctx.input) &&
+    /(versi|version|siapa|provider|memory|tim|crew|agent|bisa apa|fitur|nama|uptime)/i.test(
+      ctx.input
+    );
+
+  if (aboutSelf) {
+    const selfAnswer = babuSadar.answer(ctx.input);
+    if (selfAnswer) {
+      return { ok: true, output: selfAnswer, role: 'chatter' };
+    }
+  }
+  // ========== END SELF AWARENESS ==========
+
+  // Personality injection for natural responses
+
+  const history = isGreeting(ctx.input) ? '' : getHistory();
+
+  // Check cache first (instant response!)
+  // Cache only for longer inputs (skip greetings)
+  let cached = null;
+  if (ctx.input.length > 20) {
+    cached = babuCache.get(ctx.input);
+  }
+  if (cached) {
+    console.log('[cache] HIT — instant response');
+    return { ok: true, output: cached, role: 'chatter' };
+  }
+
+  // Handle update command
+  if (ctx.input === '/update' || ctx.input === 'update') {
+    const check = babuUpdate.checkForUpdates();
+    if (check.error)
+      return {
+        ok: true,
+        output: 'Gagal cek update: ' + check.error,
+        role: 'chatter',
+      };
+    if (!check.updateAvailable)
+      return {
+        ok: true,
+        output: 'Lo udah pake versi terbaru! ' + babuUpdate.getVersion(),
+        role: 'chatter',
+      };
+
+    const result = babuUpdate.applyUpdate();
+    if (result.success) {
+      return {
+        ok: true,
+        output:
+          '✅ SI BABU updated ke ' +
+          result.version +
+          '! Restart buat apply perubahan.',
+        role: 'chatter',
+      };
+    }
+    return {
+      ok: true,
+      output: '❌ Gagal update: ' + result.error,
+      role: 'chatter',
+    };
+  }
+
+  // Quick local responses (tanpa provider)
+const normalizedInput = (ctx.input || '').trim().toLowerCase();
+
+if (isGreeting(normalizedInput)) {
+  return {
+    ok: true,
+    output: 'halo juga 👋',
+    role: 'chatter',
+  };
+}
+
+if (isSelfQuery(normalizedInput)) {
+  return {
+    ok: true,
+    output: answerSelfQuery(normalizedInput),
+    role: 'chatter',
+  };
+}
+
+// Deteksi gibberish/random text
+const gibberishPattern = /(.)\1{15,}|[^a-z0-9\s\-_,.!?]{8,}/i;
+
+const isGibberish =
+  gibberishPattern.test(normalizedInput) ||
+  (normalizedInput.length > 25 &&
+    normalizedInput.replace(/[a-z0-9\s]/gi, '').length >
+      normalizedInput.length * 0.5);
+
+
+// Manual recall memory
+if (/ingat.*(tadi|sebelumnya)|tadi.*gw.*bilang|chat sebelumnya/i.test(ctx.input)) {
+  const mem = loadMemory();
+
+  const recent = mem.short
+    .filter(
+      (i) =>
+        i.input !== '[summary]' &&
+        i.input.toLowerCase() !== input.toLowerCase()
+    )
+    .slice(-5);
+
+  if (recent.length > 0) {
+    return {
+      ok: true,
+      output:
+        'Yang gue inget tadi:\n' +
+        recent.map((i) => '- ' + i.input).join('\n'),
+      role: 'chatter',
+    };
+  }
+}
+
+if (isGibberish) {
+  const randomResponses = [
+    'waduh, keyboard lo lagi nari-nari ya? 😂',
+    'gue bingung bacanya, coba ulangin deh',
+    'itu tadi kucing lo yang injek keyboard ya?',
+    'maaf, gue ga ngerti bahasa alien 🙃',
+    'keyboard stroke detected, coba lagi bos!',
+  ];
+
+  return {
+    ok: true,
+    output:
+      randomResponses[Math.floor(Math.random() * randomResponses.length)],
+    role: 'chatter',
+  };
+}
+
+// Self-exploration: user nanya tentang diri SI BABU
+  const selfQueryPattern =
+    /(versi|diri|siapa lu|bisa apa|fitur|module|crew|memory|dibuat)/i;
+  if (
+    selfQueryPattern.test(ctx.input) &&
+    /(lu|lo|gue|diri|sendiri|punya|elo)/i.test(ctx.input)
+  ) {
+    const report = babuEksplorasi.quickReport();
+    return {
+      ok: true,
+      output: `Gue bisa cek diri sendiri nih:\n${report}`,
+      role: 'chatter',
+    };
+  }
+
+  if (isFilesystemRequest(ctx.input)) {
+    const fsResult = handleFilesystem(ctx.input);
+    if (fsResult) return { ok: true, output: fsResult, role: 'chatter' };
+  }
+
+  const now = new Date();
+  const tgl = now.toLocaleDateString('id-ID', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  const jam = now.toLocaleTimeString('id-ID', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  const needsBrowse =
+    ctx.shouldBrowse === true
+      ? true
+      : !isOpinionQuery(ctx.input) && shouldBrowse(ctx.input);
+  let browseSection = '';
+  let hasValidData = false;
+
+  if (needsBrowse) {
+    console.log('[chatter] browsing: yes');
+    const result = await smartSearch(ctx.input, history);
+    if (result.data?.hasPages) {
+      const pagesText = result.data.pages
+        .map((p) => `--- ${p.title}\n${p.content}`)
+        .join('\n\n');
+      browseSection = `DATA INTERNET:\n${pagesText}\n\nSNIPPETS:\n${result.data.snippets}`;
+      hasValidData = true;
+    } else if (result.data?.snippets) {
+      browseSection = `SNIPPETS:\n${result.data.snippets}`;
+      hasValidData = true;
+    }
+  } else {
+    console.log('[chatter] browsing: no | reason: not needed');
+  }
+
+  let ragContext = '';
+  try {
+    const rag = require('../../tools/rag');
+    const chunks = rag.retrieve(ctx.input, 3);
+    if (chunks.length > 0) {
+      ragContext =
+        '\nINFO DARI DOKUMEN LO:\n' + rag.formatContext(chunks) + '\n';
+    }
+  } catch {}
+
+  // Inject self-awareness info
+  try {
+  } catch {}
+
+  // SUPER SIMPLE prompt — biar model ga bingung
+  // Minimal context injection (biar ringan tapi pintar)
+  let extraContext = '';
+  try {
+    const mood = babuMind.describeEmotion();
+    const nav = babuNavigasi.route(ctx.input);
+    if (mood) extraContext += `\nMood user: ${mood}`;
+    if (nav) extraContext += `\nStyle: ${nav.profile}`;
+  } catch {}
+
+  const systemPrompt = `Lo SI BABU, AI asisten ngobrol santai pake bahasa gaul Indonesia.${extraContext}\nSingkat aja.`;
+
+  const dataSection = hasValidData ? `\nINFO:\n${browseSection}\n` : '';
+
+  const userPrompt = `Waktu: ${tgl}, ${jam}
+${history ? `Obrolan terakhir:\n${history}\n` : ''}${ragContext}${dataSection}
+User: "${ctx.input}"
+Balas:`;
+
+  let output = '';
+
+  try {
+    if (ctx.stream && ctx.onToken) {
+      output = await provider.stream(
+        userPrompt,
+        { maxTokens: 250, role: 'chatter' },
+        (token) => {
+          ctx.onToken(makeCasual(token));
+        }
+      );
+    } else {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          console.log(
+            '[chatter] Prompt size:',
+            systemPrompt.length + userPrompt.length,
+            'chars'
+          );
+          output = await provider.call(userPrompt, {
+            maxTokens: 250,
+            role: 'chatter',
+          });
+          if (output && output.trim().length > 5) break;
+        } catch (err) {
+          console.log('[chatter] provider.call error:', err.message);
+          // Fallback natural
+          const fallbacks = [
+            'eh bro, server AI lagi sibuk nih. Coba ulangin aja ya?',
+            'aduh, gue timeout. Lo tanya lagi bentar ya',
+            'maaf, otak gue lagi lemot. Ulangin pertanyaannya dong',
+            'wah, provider lagi rame. Coba lagi aja bro!',
+          ];
+          output = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+          break;
+        }
+      }
+    }
+  } catch (err) {
+    console.log('[chatter] outer error:', err.message);
+  }
+
+  // Save to cache for faster response next time
+  if (output && output.trim().length > 10) {
+    try {
+      babuCache.set(ctx.input, output);
+    } catch {}
+  }
+
+  if (!output || output.trim().length < 5) {
+    output = 'eh gue ga dapet respon dari model, coba tanya lagi ya';
+  }
+  output = makeCasual(output);
+
+  return { ok: true, output: output.trim(), role: 'chatter' };
+}
+
+module.exports = { run };
