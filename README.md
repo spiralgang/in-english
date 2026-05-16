@@ -3,26 +3,10 @@
 **SI BABU**
 *Terminal Intelligence for Termux & Linux*
 
-[
-
-![Node.js](https://img.shields.io/badge/Node.js-v16+-green.svg)
-
-](https://nodejs.org)
-[
-
-![License](https://img.shields.io/badge/License-MIT-blue.svg)
-
-](LICENSE)
-[
-
-![Platform](https://img.shields.io/badge/Platform-Termux%20%7C%20Linux-orange.svg)
-
-](https://termux.dev)
-[
-
-![Telegram](https://img.shields.io/badge/Telegram-Community-2CA5E0?logo=telegram)
-
-](https://t.me/sibabukomunitas)
+[![Node.js](https://img.shields.io/badge/Node.js-v16+-green.svg)](https://nodejs.org)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Termux%20%7C%20Linux-orange.svg)](https://termux.dev)
+[![Telegram](https://img.shields.io/badge/Telegram-Community-2CA5E0?logo=telegram)](https://t.me/sibabukomunitas)
 
 </div>
 
@@ -330,29 +314,13 @@ Born from a personal exploration project, SI BABU goes beyond a simple chatbot. 
 
 ### 💬 Join the Community
 
-[
-
-![Telegram Community](https://img.shields.io/badge/Telegram-Join%20SI%20BABU%20Community-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)
-
-](https://t.me/sibabukomunitas)
+[![Telegram Community](https://img.shields.io/badge/Telegram-Join%20SI%20BABU%20Community-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/sibabukomunitas)
 
 ---
 
-[
-
-![GitHub](https://img.shields.io/badge/GitHub-monggosu%2Fsi--babu-181717?style=flat-square&logo=github)
-
-](https://github.com/monggosu/si-babu)
-[
-
-![Built with Termux](https://img.shields.io/badge/Built%20with-Termux-black?style=flat-square&logo=android)
-
-](https://termux.dev)
-[
-
-![Made in Indonesia](https://img.shields.io/badge/Made%20in-Indonesia-red?style=flat-square)
-
-](https://github.com/monggosu)
+[![GitHub](https://img.shields.io/badge/GitHub-monggosu%2Fsi--babu-181717?style=flat-square&logo=github)](https://github.com/monggosu/si-babu)
+[![Built with Termux](https://img.shields.io/badge/Built%20with-Termux-black?style=flat-square&logo=android)](https://termux.dev)
+[![Made in Indonesia](https://img.shields.io/badge/Made%20in-Indonesia-red?style=flat-square)](https://github.com/monggosu)
 
 *Dibuat dengan ❤️ di Indonesia 🇮🇩*
 
