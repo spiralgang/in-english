@@ -20,6 +20,18 @@ class ProjectManagerAgent extends AgentBase {
 
   async planTask(taskDesc) {
     this.say(`Task masuk: "${taskDesc}"`);
+    // Deteksi task simpel — langsung 1 subtask tanpa tanya LLM
+    const isSimple = taskDesc.length < 80 || /\b(hello world|halo dunia|kalkulator|palindrome|bilangan prima|fibonacci|monitoring|backup|rename|scraper|validator|generator|checker|counter|timer|clock|weather|calculator)\b/i.test(taskDesc);
+    if (isSimple) {
+      this.say('Task simpel, langsung eksekusi 1 subtask');
+      return {
+        needsResearch : false,
+        needsArchitect: false,
+        subtasks      : [{ id: 1, desc: taskDesc }],
+        successCriteria: 'Script jalan dan output sesuai',
+      };
+    }
+
     let plan;
     try {
       const raw = await this.think(

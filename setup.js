@@ -384,24 +384,64 @@ async function main() {
 
   const env = loadEnv();
 
-  await installDeps();
-  await setupIdentity(env);
-  const primary = await setupProvider(env);
-  await setupCrewModels(env, primary);
-  await setupGateway(env);
-  await showSummary(env, primary);
+  const arg = process.argv[2];
+
+  const MENU = {
+    '1': { label: 'Identitas (nama agent & user)',     fn: () => setupIdentity(env) },
+    '2': { label: 'AI Provider & API Key',             fn: async () => { const p = await setupProvider(env); saveEnv(env); return p; } },
+    '3': { label: 'Model per Crew Agent',              fn: async () => {
+      const primary = PROVIDERS.find(p => p.id === (env.AI_PROVIDER || 'groq')) || PROVIDERS[0];
+      await setupCrewModels(env, primary);
+    }},
+    '4': { label: 'Gateway (Telegram / WhatsApp)',     fn: () => setupGateway(env) },
+    '5': { label: 'Full Setup (semua langkah)',        fn: null },
+  };
+
+  const FLAG_MAP = {
+    '--identity' : '1',
+    '--provider' : '2',
+    '--models'   : '3',
+    '--gateway'  : '4',
+    '--full'     : '5',
+  };
+
+  let choice = FLAG_MAP[arg] || null;
+
+  if (!choice) {
+    console.log(`  ${c.cyan}${c.bold}Mau setup bagian apa?${c.reset}\n`);
+    Object.entries(MENU).forEach(([k, v]) => {
+      console.log(`  ${c.bold}${k}.${c.reset} ${v.label}`);
+    });
+    console.log();
+    choice = await ask(`  Pilih [1-5]: `);
+  }
+
+  if (!MENU[choice]) {
+    bad('Pilihan tidak valid.');
+    rl.close();
+    process.exit(1);
+  }
+
+  if (choice === '5') {
+    await installDeps();
+    await setupIdentity(env);
+    const primary = await setupProvider(env);
+    await setupCrewModels(env, primary);
+    await setupGateway(env);
+    await showSummary(env, primary);
+  } else {
+    console.log(`\n  ${c.cyan}${c.bold}Setup: ${MENU[choice].label}${c.reset}\n`);
+    await MENU[choice].fn();
+    saveEnv(env);
+    ok('.env tersimpan');
+    nl();
+    log(`${c.green}Selesai! Restart SI BABU untuk menerapkan perubahan.${c.reset}`);
+    nl();
+  }
 
   rl.close();
   process.exit(0);
 }
-
-process.on('SIGINT', () => {
-  nl();
-  warn('Setup dibatalkan. Jalankan lagi: node setup.js');
-  nl();
-  rl.close();
-  process.exit(0);
-});
 
 main().catch(err => {
   bad(`Error: ${err.message}`);

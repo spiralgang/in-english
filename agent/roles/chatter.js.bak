@@ -154,8 +154,11 @@ if (isGreeting(normalizedInput)) {
 }
 
 if (isSelfQuery(normalizedInput)) {
-  const selfAns = answerSelfQuery(normalizedInput);
-  if (selfAns) return { ok: true, output: selfAns, role: 'chatter' };
+  return {
+    ok: true,
+    output: answerSelfQuery(normalizedInput),
+    role: 'chatter',
+  };
 }
 
 // Deteksi gibberish/random text

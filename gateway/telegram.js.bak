@@ -131,24 +131,6 @@ bot.command('clear', async (ctx) => {
   }
 });
 
-
-// Filter output internal yang tidak perlu ditampilkan ke user
-function cleanOutput(text) {
-  if (!text) return text;
-  if (
-    /^(STATUS:|ISSUES:|SUMMARY:|Review Kode|STATUS: PASS|STATUS: FAIL)/m.test(text)
-  ) {
-    const expMatch = text.match(/EXPLANATION[:\s]+([\s\S]+)/i);
-    if (expMatch) return expMatch[1].trim();
-    return null;
-  }
-  return text
-    .replace(/^#{1,4}\s+.+$/gm, '')
-    .replace(/\*\*(.+?)\*\*/g, '$1')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
-}
-
 // ─── Handle pesan biasa ───────────────────────────────────────────
 bot.on('text', async (ctx) => {
   const input    = ctx.message.text.trim();
@@ -184,9 +166,7 @@ bot.on('text', async (ctx) => {
     if (savedFiles.length > 0) {
       await sendMessage(ctx, `✅ Done! File tersimpan:\n${savedFiles.map(f => `• \`${f}\``).join('\n')}`);
     } else if (output.trim()) {
-      const clean = cleanOutput(output);
-      if (clean) await sendMessage(ctx, clean);
-      else await sendMessage(ctx, '✅ Selesai!');
+      await sendMessage(ctx, output);
     } else {
       await sendMessage(ctx, '✅ Selesai!');
     }

@@ -71,7 +71,9 @@ class BuilderAgent extends AgentBase {
     ];
     const prompt = parts.filter(Boolean).join('\n');
 
-    this.say('Nulis kode...');
+    // Set output dir unik per subtask
+const subtaskSlug = task.desc.toLowerCase().replace(/[^a-z0-9]+/g, '_').slice(0, 20);
+this.say('Nulis kode...');
     let output = null, lastErr = null;
 
     for (let t = 1; t <= 3; t++) {

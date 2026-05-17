@@ -12,7 +12,8 @@ function isSelfQuery(input) {
 function answerSelfQuery(input) {
   const sadar = babuSadar.answer(input);
   if (sadar) return sadar;
-  return null;
+
+  return babuEksplorasi.quickReport();
 }
 
 module.exports = {
