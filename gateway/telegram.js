@@ -1,5 +1,7 @@
 'use strict';
 
+const fs = require('fs');
+
 require('dotenv').config();
 
 const { Telegraf } = require('telegraf');
@@ -51,6 +53,21 @@ async function sendMessage(ctx, text) {
       // Fallback tanpa markdown kalau parse error
       await ctx.reply(chunk);
     }
+  }
+}
+
+
+// Kirim foto ke Telegram
+async function sendPhoto(ctx, photoPath, caption = '') {
+  try {
+    if (!fs.existsSync(photoPath)) {
+      await ctx.reply('❌ File foto tidak ditemukan: ' + photoPath);
+      return;
+    }
+    await ctx.replyWithPhoto({ source: photoPath }, { caption });
+  } catch (err) {
+    log('Gagal kirim foto: ' + err.message);
+    await ctx.reply('❌ Gagal kirim foto: ' + err.message);
   }
 }
 
@@ -179,6 +196,13 @@ bot.on('text', async (ctx) => {
     }
 
     const output     = result.output || '';
+
+    // Kirim foto kalau ada
+    const photoMatch = output.match(/Foto tersimpan di:\s*(.+\.jpg)/);
+    if (photoMatch) {
+      await sendPhoto(ctx, photoMatch[1].trim(), '📸 Foto dari SI BABU');
+      return;
+    }
     const savedFiles = result.savedFiles || [];
 
     if (savedFiles.length > 0) {

@@ -143,6 +143,21 @@ async function run(ctx) {
   }
 
   // Quick local responses (tanpa provider)
+  // ─── Tool Caller ─────────────────────────────────────────────
+  try {
+    const toolCaller = require('../roles/tool_caller');
+    const decision   = await toolCaller.decide(ctx.input);
+    if (decision.tool && decision.tool !== 'NONE') {
+      console.log('[chatter] tool:', decision.tool, decision.params);
+      const result = await toolCaller.execute(decision.tool, decision.params || {});
+      if (result !== null) {
+        return { ok: true, output: String(result), role: 'chatter' };
+      }
+    }
+  } catch (err) {
+    console.log('[chatter] tool_caller error:', err.message);
+  }
+
 const normalizedInput = (ctx.input || '').trim().toLowerCase();
 
 if (isGreeting(normalizedInput)) {
@@ -207,6 +222,9 @@ if (isGibberish) {
     role: 'chatter',
   };
 }
+
+  
+
 
   if (isFilesystemRequest(ctx.input)) {
     const fsResult = handleFilesystem(ctx.input);

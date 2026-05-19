@@ -15,3 +15,5 @@ memory/*.json
 # Demo
 *.mp4
 
+output/*
+output/*

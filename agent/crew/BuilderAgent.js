@@ -5,6 +5,8 @@ const fileTool  = require('../../tools/file');
 const path      = require('path');
 
 const PROJECT_ROOT = path.resolve(__dirname, '../../');
+const OUTPUT_ROOT   = path.resolve(__dirname, '../../output');
+if (!require('fs').existsSync(OUTPUT_ROOT)) require('fs').mkdirSync(OUTPUT_ROOT, { recursive: true });
 const PROTECTED    = ['main.js', 'orchestrator.js', 'package.json', '.env'];
 
 class BuilderAgent extends AgentBase {
@@ -112,8 +114,8 @@ this.say('Nulis kode...');
       const rawPath = match[1].trim(), content = match[2].trim();
       if (!rawPath || !content) continue;
       if (PROTECTED.includes(path.basename(rawPath))) continue;
-      const absPath = path.resolve(PROJECT_ROOT, rawPath);
-      if (!absPath.startsWith(PROJECT_ROOT) || savedPaths.has(absPath)) continue;
+      const absPath = path.resolve(OUTPUT_ROOT, rawPath);
+      if (!absPath.startsWith(OUTPUT_ROOT) || savedPaths.has(absPath)) continue;
       try {
         savedPaths.add(absPath);
         await fileTool.write(absPath, content);

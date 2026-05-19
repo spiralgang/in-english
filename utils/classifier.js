@@ -62,6 +62,16 @@ function wordCount(s) {
 }
 
 function classify(input) {
+  // Termux:API commands — harus chat bukan research
+  const TERMUX_CMDS = [
+    /\b(cek|ambil|lihat|baca)\s*(lokasi|gps|sms|baterai|clipboard|foto|kamera)\b/i,
+    /\b(bacain|ucapkan|tts|speak)\b/i,
+    /\b(kasih|kirim)\s*(notif|notifikasi)\b/i,
+    /\b(getar|vibrate|toast)\b/i,
+    /\bfoto\s*(kamera|depan|belakang)\b/i,
+  ];
+  if (TERMUX_CMDS.some(r => r.test(input))) return 'chat';
+
   if (!input || !input.trim()) return 'chat';
   const t = input.trim();
 
