@@ -322,3 +322,43 @@ Project ini aktif dikembangkan menuju **v1.0 stable release**. Yang sedang dan a
 
 Kalau lo mau ikut kontribusi atau punya ide fitur, buka Issue atau Pull Request — semua masukan sangat diterima!
 
+
+---
+
+## 🔄 Update SI BABU
+
+SI BABU punya fitur auto-update bawaan. Ada 2 cara update:
+
+### Cara 1 — Update via Command (Recommended)
+Langsung ketik di dalam SI BABU:
+
+    update
+
+SI BABU akan otomatis:
+1. Cek apakah ada versi terbaru di GitHub
+2. Download update terbaru
+3. Install dependencies baru kalau ada
+4. Kasih tau kalau update berhasil
+
+Setelah update, restart SI BABU:
+
+    exit
+    npm start
+
+### Cara 2 — Update Manual via Git
+
+    cd si-babu
+    git pull origin main
+    npm install
+    npm start
+
+### Auto Notif Update
+Setiap kali `npm start`, SI BABU otomatis cek update di background. Kalau ada versi baru, akan muncul notifikasi kuning di atas:
+
+    ╔══════════════════════════════════════════════╗
+    ║  🆕 UPDATE TERSEDIA!                         ║
+    ╚══════════════════════════════════════════════╝
+    Ketik "update" untuk update otomatis
+
+> **Catatan:** Pastikan koneksi internet aktif saat update. Data dan konfigurasi (.env) tidak akan terhapus saat update.
+

@@ -275,6 +275,27 @@ Tone   : ${mem.profile?.tone || 'santai'}\n`);
   return false;
 }
 
+
+// ─── Auto check update saat startup ─────────────────────────────
+async function checkUpdateOnStartup() {
+  try {
+    const updater = require('./core/babu_update');
+    const result  = updater.checkForUpdates();
+    if (result.updateAvailable) {
+      console.log(`${c.yellow}╔══════════════════════════════════════════════╗${c.reset}`);
+      console.log(`${c.yellow}║  🆕 UPDATE TERSEDIA!                         ║${c.reset}`);
+      console.log(`${c.yellow}║  Local : ${result.local.padEnd(36)}║${c.reset}`);
+      console.log(`${c.yellow}║  Remote: ${result.remote.padEnd(36)}║${c.reset}`);
+      console.log(`${c.yellow}╚══════════════════════════════════════════════╝${c.reset}`);
+      console.log(`${c.dim}  Ketik "update" untuk update otomatis${c.reset}
+`);
+    }
+  } catch {}
+}
+
+// Cek update di background — tidak block startup
+checkUpdateOnStartup();
+
 async function main() {
   printBanner();
 
@@ -368,9 +389,31 @@ let orchestrator;
         return;
       }
 
-      startLoader();
       let result;
       try {
+
+        // Command: update
+        if (input.trim().toLowerCase() === 'update') {
+          console.log('\x1b[33m[UPDATE] Mengecek update...\x1b[0m');
+          const updater = require('./core/babu_update');
+          const check   = updater.checkForUpdates();
+          if (!check.updateAvailable) {
+            console.log('\x1b[32m✅ SI BABU sudah versi terbaru!\x1b[0m\n');
+          } else {
+            console.log('\x1b[33m[UPDATE] Update ditemukan, mengunduh...\x1b[0m');
+            const result = updater.applyUpdate();
+            if (result.success) {
+              console.log('\x1b[32m✅ Update berhasil ke ' + result.version + '!\x1b[0m');
+              console.log('\x1b[2mRestart SI BABU untuk pakai versi terbaru.\x1b[0m\n');
+            } else {
+              console.log('\x1b[31m❌ Update gagal: ' + result.error + '\x1b[0m\n');
+            }
+          }
+          prompt();
+          return;
+        }
+
+        startLoader();
         result = await orchestrator.run(input);
       } catch (err) {
         stopLoader();
