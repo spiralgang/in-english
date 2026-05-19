@@ -285,3 +285,40 @@ Built from scratch as a personal exploration project, SI BABU goes beyond a simp
 *Dibuat dengan hati di Indonesia*
 
 </div>
+
+---
+
+## 📋 Changelog
+
+### v0.9.0 — Termux:API & Tool Calling (Mei 2026)
+
+**Fitur Baru:**
+- Integrasi Termux:API — baca SMS, kirim notifikasi, ambil foto (depan/belakang), TTS, cek lokasi GPS, baterai, clipboard
+- Tool Caller berbasis LLM — SI BABU mutusin sendiri kapan pakai tool, tanpa pattern matching kaku
+- Foto kamera bisa langsung dikirim ke Telegram
+- Crew mode: task simpel langsung 1 subtask tanpa over-breakdown
+- Builder sekarang nyimpen hasil build ke folder `output/` biar tidak campur sama kode SI BABU
+- Setup wizard support CLI flags: `--gateway`, `--provider`, `--identity`, `--models`, `--full`
+
+**Bug Fix:**
+- Output checker/verifier tidak bocor ke Telegram
+- Self-awareness tidak lagi return dump teknis mentah
+- Chatter null check — fallback ke LLM kalau tidak ada jawaban spesifik
+- Classifier detect termux commands dengan benar
+
+---
+
+## 🗺️ Roadmap menuju v1.0
+
+Project ini aktif dikembangkan menuju **v1.0 stable release**. Yang sedang dan akan dikerjakan:
+
+- [ ] Stabilisasi semua fitur yang ada
+- [ ] Self-improvement loop — SI BABU bisa edit kodenya sendiri
+- [ ] Scheduled tasks — jalanin task otomatis terjadwal
+- [ ] Voice input via Termux:API microphone
+- [ ] Web UI (opsional)
+- [ ] Dokumentasi lengkap per modul
+- [ ] Test coverage
+
+Kalau lo mau ikut kontribusi atau punya ide fitur, buka Issue atau Pull Request — semua masukan sangat diterima!
+
