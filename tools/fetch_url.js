@@ -1,60 +1,58 @@
-/**
- * tools/fetch_url.js — Fetch & extract clean text dari URL
- */
 'use strict';
 
-const axios = require('axios');
+const https    = require('https');
+const http     = require('http');
 const { parse } = require('node-html-parser');
 
 const MAX_LENGTH = 5000;
 
-async function fetch(url) {
-  try {
-    const res = await axios.get(url, {
+async function fetchRaw(url) {
+  return new Promise((resolve, reject) => {
+    const lib     = url.startsWith('https') ? https : http;
+    const options = {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; ai-agent-cli/1.0)',
-        Accept: 'text/html',
+        'Accept'    : 'text/html,application/xhtml+xml',
       },
-      timeout: 12000,
-      maxRedirects: 3,
-      // Jangan throw untuk status non-2xx
-      validateStatus: (s) => s < 500,
+    };
+
+    const req = lib.get(url, options, (res) => {
+      // Handle redirect
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        return fetchRaw(res.headers.location).then(resolve).catch(reject);
+      }
+
+      let data = '';
+      res.setEncoding('utf8');
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => resolve(data));
     });
 
-    const root = parse(res.data);
+    req.on('error', reject);
+    req.setTimeout(12000, () => { req.destroy(); reject(new Error('Timeout')); });
+  });
+}
+
+async function fetch(url) {
+  try {
+    const html = await fetchRaw(url);
+    const root = parse(html);
 
     // Hapus elemen tidak perlu
-    for (const tag of [
-      'script',
-      'style',
-      'nav',
-      'footer',
-      'header',
-      'aside',
-      'noscript',
-    ]) {
-      root.querySelectorAll(tag).forEach((el) => el.remove());
+    for (const tag of ['script', 'style', 'nav', 'footer', 'header', 'iframe', 'noscript']) {
+      root.querySelectorAll(tag).forEach(el => el.remove());
     }
 
-    // Ambil text bersih
-    let text =
-      root.querySelector('main')?.text ||
-      root.querySelector('article')?.text ||
-      root.querySelector('body')?.text ||
-      root.text;
-
-    // Bersihkan whitespace berlebih
-    text = text
-      .replace(/\t/g, ' ')
-      .replace(/[ ]{2,}/g, ' ')
+    // Ambil teks bersih
+    const text = root.text
+      .replace(/\s+/g, ' ')
       .replace(/\n{3,}/g, '\n\n')
       .trim()
       .slice(0, MAX_LENGTH);
 
-    return { url, content: text };
+    return { ok: true, content: text, url };
   } catch (err) {
-    console.error('[fetch_url] Error:', err.message);
-    return { url, content: '' };
+    return { ok: false, content: '', error: err.message, url };
   }
 }
 
