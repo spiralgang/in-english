@@ -362,3 +362,25 @@ Setiap kali `npm start`, SI BABU otomatis cek update di background. Kalau ada ve
 
 > **Catatan:** Pastikan koneksi internet aktif saat update. Data dan konfigurasi (.env) tidak akan terhapus saat update.
 
+
+---
+
+## 📢 Catatan Update — Browsing Real-time (v0.9.1)
+
+Minta maaf untuk pengguna yang sebelumnya mencoba fitur browsing real-time SI BABU — fitur ini sebelumnya tidak berfungsi dengan baik dan sering memberikan jawaban tidak akurat atau tidak bisa menemukan data sama sekali.
+
+**Update v0.9.1 memperbaiki ini sepenuhnya:**
+- Sekarang SI BABU benar-benar fetch konten dari website secara langsung
+- Hasil lebih akurat dengan data spesifik (harga, angka, fakta)
+- Menyebutkan sumber informasi
+- Cache 30 menit biar tidak fetch ulang untuk pertanyaan yang sama
+
+Contoh yang sekarang sudah bisa:
+
+    harga emas sekarang?
+    kurs dollar hari ini
+    berita terbaru tentang AI
+    cuaca jakarta hari ini
+    harga bitcoin sekarang
+
+---
