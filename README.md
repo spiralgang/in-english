@@ -12,99 +12,99 @@
 
 ---
 
-## Apa Itu SI BABU?
+## What is SI BABU?
 
-**SI BABU** adalah AI Agent modular berbasis Node.js yang dirancang khusus untuk berjalan di terminal, terutama di **Termux (Android)** dan berbagai distribusi Linux.
+**SI BABU** is a modular AI Agent built with Node.js, designed specifically to run in the terminal, especially on **Termux (Android)** and various Linux distributions.
 
-Project ini lahir dari eksplorasi pribadi tentang bagaimana AI Agent bisa bekerja secara lokal, ringan, dan tetap berguna sehari-hari. SI BABU bukan sekadar chatbot — ia adalah agent cerdas yang bisa berpikir mandiri, menggunakan berbagai tools, mengingat percakapan jangka panjang, melakukan riset real-time, menulis kode lengkap, menganalisis error, serta bekerja kolaboratif lewat sistem **Multi-Agent Crew**.
+This project was born from a personal exploration into how AI Agents can work locally, remain lightweight, and still be useful in everyday tasks. SI BABU is more than just a chatbot — it's an intelligent agent that can reason independently, use tools, maintain long-term memory, research the web, and generate production-ready code.
 
-> Project ini masih dalam tahap **Beta**. Beberapa fitur mungkin belum sempurna atau masih dalam penyempurnaan. Dibuat sebagai proyek pribadi untuk eksplorasi dan pembelajaran — bukan produk komersial. Feedback dan kontribusi sangat diharapkan.
-
----
-
-## Fitur
-
-| Fitur | Deskripsi |
-|-------|-----------|
-| **Multi-Agent Crew** | Tim agent (PM, Architect, Builder, Researcher, QA) yang bisa berdiskusi, berdebat, dan berkolaborasi menghasilkan kode production-ready |
-| **Natural Conversation** | Ngobrol santai pakai bahasa Indonesia sehari-hari (gue/lo), bukan robot kaku |
-| **Long-term Memory** | Mengingat percakapan dan belajar dari interaksi sebelumnya via SQLite |
-| **RAG** | Bisa membaca dan belajar dari dokumen PDF/TXT milik user |
-| **Multi AI Provider** | NVIDIA NIM, Groq, Gemini, OpenRouter, OpenAI, Ollama dengan fallback otomatis |
-| **Real-time Web Research** | Cari dan rangkum informasi terkini dari internet |
-| **Code Generation & Debugging** | Generate kode lengkap, analisis error, dan perbaiki bug secara otomatis |
-| **Emotion Engine** | Mood si babu berubah sesuai konteks percakapan |
-| **Telegram Gateway** | Akses SI BABU lewat bot Telegram |
-| **WhatsApp Gateway** | Akses SI BABU lewat WhatsApp |
-| **Setup Wizard** | Konfigurasi mudah dan ramah pemula lewat node setup.js |
-| **Plugin System** | Mudah dikembangkan dengan menambahkan plugin baru |
+> This project is still in **Beta**. Some features may not be perfect or are still being refined. Built as a personal project for exploration and learning — not a commercial product. Feedback is welcome.
 
 ---
 
-## Persyaratan
+## Features
 
-Sebelum install, pastikan ini sudah ada:
+| Feature | Description |
+|---------|-------------|
+| **Multi-Agent Crew** | A team of agents (PM, Architect, Builder, Researcher, QA) that can discuss, debate, and collaborate to produce production-ready code |
+| **Natural Conversation** | Casual conversation in everyday language, not robotic responses |
+| **Long-term Memory** | Remembers conversations and learns from previous interactions via SQLite |
+| **RAG** | Can read and learn from user PDF/TXT documents |
+| **Multi AI Provider** | NVIDIA NIM, Groq, Gemini, OpenRouter, OpenAI, Ollama with automatic fallback |
+| **Real-time Web Research** | Search and summarize current information from the internet |
+| **Code Generation & Debugging** | Generate complete code, analyze errors, and fix bugs automatically |
+| **Emotion Engine** | SI BABU's mood changes based on conversation context |
+| **Telegram Gateway** | Access SI BABU via Telegram bot |
+| **WhatsApp Gateway** | Access SI BABU via WhatsApp |
+| **Setup Wizard** | Easy and beginner-friendly configuration via node setup.js |
+| **Plugin System** | Easy to extend by adding new plugins |
+
+---
+
+## Requirements
+
+Before installing, make sure you have:
 
 - Node.js v16+
 - Git
 - sqlite3
 
-Install di Termux:
+Install on Termux:
 
     pkg update && pkg upgrade
     pkg install git nodejs sqlite
 
 ---
 
-## Instalasi
+## Installation
 
     git clone https://github.com/monggosu/si-babu.git
     cd si-babu
     node setup.js
 
-Setup wizard akan otomatis memandu kamu untuk:
-- Install semua dependencies
-- Memasukkan nama kamu dan nama agent
-- Memilih provider AI dan mengisi API key
-- Menguji koneksi ke provider yang dipilih
-- Memilih model untuk setiap agent crew
-- Mengaktifkan Telegram/WhatsApp gateway (opsional)
+The setup wizard will automatically guide you through:
+- Installing all dependencies
+- Entering your name and agent name
+- Choosing an AI provider and entering your API key
+- Testing the connection to your chosen provider
+- Selecting a model for each agent crew
+- Enabling Telegram/WhatsApp gateway (optional)
 
 ---
 
-## Cara Menjalankan
+## How to Run
 
-    npm start          # Mode chat biasa
-    npm run crew       # Mode multi-agent crew
-    node setup.js      # Jalankan ulang wizard setup
+    npm start          # Normal chat mode
+    npm run crew       # Multi-agent crew mode
+    node setup.js      # Run setup wizard again
 
 ---
 
-## Contoh Penggunaan
+## Usage Examples
 
-Setelah npm start:
+After running npm start:
 
-    halo                                       # sapaan biasa
-    siapa kamu?                                # kenalan sama si babu
-    browsing harga emas hari ini               # cari info realtime
-    buatkan script backup folder otomatis      # generate kode lengkap
-    fix: TypeError cannot read property        # debug dan fix error
-    pelajari dokumen.pdf                       # belajar dari dokumen
-    hitung 15% dari 850000                     # kalkulator
+    hello                                      # simple greeting
+    who are you?                               # introduce yourself to SI BABU
+    browse gold price today                    # get real-time info
+    create an automatic folder backup script   # generate complete code
+    fix: TypeError cannot read property        # debug and fix error
+    learn document.pdf                         # learn from a document
+    calculate 15% of 850000                    # calculator
 
-Untuk mode crew:
+For crew mode:
 
     npm run crew
-    Masukkan task: buat REST API dengan Express
+    Enter task: create a REST API with Express
 
 ---
 
-## Setup .env Manual
+## Manual .env Setup
 
     cp .env.example .env
     nano .env
 
-Contoh isi .env:
+Example .env content:
 
     AI_PROVIDER=groq
 
@@ -133,20 +133,20 @@ Contoh isi .env:
     WA_GATEWAY=false
     WA_MODE=wwebjs
 
-JANGAN pernah upload file .env asli kamu ke GitHub!
+NEVER upload your original .env file to GitHub!
 
 ---
 
-## Provider AI yang Didukung
+## Supported AI Providers
 
-| Provider | Gratis | Kecepatan | Cara Daftar |
-|----------|--------|-----------|-------------|
-| Groq | Ya | Sangat Cepat | console.groq.com |
-| NVIDIA NIM | Ya | Sedang | build.nvidia.com |
-| OpenRouter | Ada free tier | Sedang | openrouter.ai |
-| Google Gemini | Ada free tier | Cepat | aistudio.google.com |
-| OpenAI | Berbayar | Cepat | platform.openai.com |
-| Ollama | Gratis lokal | Tergantung HP | ollama.ai |
+| Provider | Free | Speed | Sign Up |
+|----------|------|-------|---------|
+| Groq | Yes | Very Fast | console.groq.com |
+| NVIDIA NIM | Yes | Medium | build.nvidia.com |
+| OpenRouter | Free tier available | Medium | openrouter.ai |
+| Google Gemini | Free tier available | Fast | aistudio.google.com |
+| OpenAI | Paid | Fast | platform.openai.com |
+| Ollama | Free local | Depends on device | ollama.ai |
 
 ---
 
@@ -156,7 +156,7 @@ JANGAN pernah upload file .env asli kamu ke GitHub!
 
     pkg install sqlite
 
-**NVIDIA response kosong atau timeout**
+**NVIDIA response empty or timeout**
 
     AI_PROVIDER=groq
 
@@ -168,105 +168,57 @@ JANGAN pernah upload file .env asli kamu ke GitHub!
 
     CREW_MODEL_BUILDER=llama-3.1-8b-instant
 
-**WhatsApp Gateway tidak connect**
+**WhatsApp Gateway won't connect**
 
     pkg install chromium
 
 ---
 
-## Struktur Project
+## Project Structure
 
     si-babu/
     ├── agent/
-    │   ├── roles/          # chatter, builder, researcher, dll
+    │   ├── roles/          # chatter, builder, researcher, etc.
     │   ├── crew/           # PM, Architect, Builder, QA, Researcher
-    │   └── pipeline/       # alur per intent
+    │   └── pipeline/       # intent flow
     ├── core/               # memory, emotion engine, self-awareness
     ├── gateway/            # Telegram & WhatsApp
-    ├── provider/           # NVIDIA, Groq, Gemini, dll
+    ├── provider/           # NVIDIA, Groq, Gemini, etc.
     ├── tools/              # web search, file, RAG, plugins
     ├── utils/              # helper functions
-    ├── main.js             # entry point chat biasa
-    ├── orchestrator.js     # otak utama SI BABU
-    └── setup.js            # wizard setup
+    ├── main.js             # entry point for normal chat
+    ├── orchestrator.js     # SI BABU's main brain
+    └── setup.js            # setup wizard
 
 ---
 
-## Cara Modifikasi
+## How to Modify
 
-Tambah provider baru — buat provider/namaprovider.js dengan export call() dan stream(). Lihat provider/groq.js sebagai contoh.
+**Add a new provider** — Create provider/yourprovider.js with exported call() and stream() functions. See provider/groq.js as an example.
 
-Tambah role agent baru — buat agent/roles/namarole.js dengan export run(ctx). Tambahkan ke pipeline di agent/pipeline/.
+**Add a new agent role** — Create agent/roles/yourrole.js with exported run(ctx) function. Add it to the pipeline in agent/pipeline/.
 
-Tambah plugin baru — buat file di tools/plugins/namatool.js, auto-loaded tanpa perlu edit file lain.
-
----
-
-## Kontribusi
-
-1. Fork repo ini
-2. Buat branch: git checkout -b fitur-baru
-3. Commit: git commit -m tambah fitur X
-4. Push: git push origin fitur-baru
-5. Buat Pull Request
+**Add a new plugin** — Create a file in tools/plugins/yourtool.js, auto-loaded without needing to edit other files.
 
 ---
 
-## Catatan Penting
+## Contributing
 
-- Project ini masih Beta dan terus berkembang
-- Beberapa fitur bersifat eksperimental
-- Crew mode bergantung pada kecepatan provider AI
-- Dibuat sebagai proyek pribadi untuk eksplorasi dan pembelajaran
-- Bukan produk komersial
+1. Fork this repository
+2. Create a branch: git checkout -b new-feature
+3. Commit: git commit -m "add feature X"
+4. Push: git push origin new-feature
+5. Create a Pull Request
 
 ---
 
-## English
+## Important Notes
 
-### What is SI BABU?
-
-SI BABU is a modular AI Agent built with Node.js, designed to run in the terminal, especially on Termux (Android) and Linux.
-
-Built from scratch as a personal exploration project, SI BABU goes beyond a simple chatbot. It can reason independently, use tools, retain long-term memory, research the web, generate complete code, debug errors, and collaborate through a Multi-Agent Crew system.
-
-> Still in Beta. Some features are experimental. Built for personal learning — not a commercial product. Feedback welcome.
-
-### Features
-
-| Feature | Description |
-|---------|-------------|
-| Multi-Agent Crew | PM, Architect, Builder, Researcher, QA agents that discuss and collaborate |
-| Natural Conversation | Casual Indonesian conversation style |
-| Long-term Memory | Remembers conversations via SQLite |
-| RAG | Learns from user PDF/TXT documents |
-| Multi AI Provider | NVIDIA, Groq, Gemini, OpenRouter, OpenAI, Ollama with smart fallback |
-| Web Research | Real-time information search |
-| Code Generation | Generate complete scripts and debug errors |
-| Emotion Engine | Mood adapts to conversation context |
-| Telegram Gateway | Access via Telegram bot |
-| WhatsApp Gateway | Access via WhatsApp |
-| Setup Wizard | Beginner-friendly setup |
-| Plugin System | Easily extensible |
-
-### Installation
-
-    git clone https://github.com/monggosu/si-babu.git
-    cd si-babu
-    node setup.js
-
-### Usage
-
-    npm start          # Normal chat mode
-    npm run crew       # Multi-agent crew mode
-    node setup.js      # Re-run setup wizard
-
-### Important Notes
-
-- Still in Beta, some features are experimental
-- Built for personal exploration and learning
+- This project is still in Beta and continuously evolving
+- Some features are experimental
+- Crew mode depends on AI provider speed
+- Built as a personal project for exploration and learning
 - Not a commercial product
-- Crew mode depends on provider speed
 
 ---
 
@@ -282,7 +234,7 @@ Built from scratch as a personal exploration project, SI BABU goes beyond a simp
 [![Built with Termux](https://img.shields.io/badge/Built%20with-Termux-black?style=flat-square&logo=android)](https://termux.dev)
 [![Made in Indonesia](https://img.shields.io/badge/Made%20in-Indonesia-red?style=flat-square)](https://github.com/monggosu)
 
-*Dibuat dengan hati di Indonesia*
+*Built with passion in Indonesia*
 
 </div>
 
@@ -290,97 +242,95 @@ Built from scratch as a personal exploration project, SI BABU goes beyond a simp
 
 ## 📋 Changelog
 
-### v0.9.0 — Termux:API & Tool Calling (Mei 2026)
+### v0.9.0 — Termux:API & Tool Calling (May 2026)
 
-**Fitur Baru:**
-- Integrasi Termux:API — baca SMS, kirim notifikasi, ambil foto (depan/belakang), TTS, cek lokasi GPS, baterai, clipboard
-- Tool Caller berbasis LLM — SI BABU mutusin sendiri kapan pakai tool, tanpa pattern matching kaku
-- Foto kamera bisa langsung dikirim ke Telegram
-- Crew mode: task simpel langsung 1 subtask tanpa over-breakdown
-- Builder sekarang nyimpen hasil build ke folder `output/` biar tidak campur sama kode SI BABU
-- Setup wizard support CLI flags: `--gateway`, `--provider`, `--identity`, `--models`, `--full`
+**New Features:**
+- Termux:API integration — read SMS, send notifications, take photos (front/back), TTS, check GPS location, battery, clipboard
+- LLM-based Tool Caller — SI BABU decides when to use tools, without rigid pattern matching
+- Camera photos can be sent directly to Telegram
+- Crew mode: simple tasks now require just 1 subtask without over-breakdown
+- Builder now saves build results to the `output/` folder to avoid mixing with SI BABU code
+- Setup wizard supports CLI flags: `--gateway`, `--provider`, `--identity`, `--models`, `--full`
 
-**Bug Fix:**
-- Output checker/verifier tidak bocor ke Telegram
-- Self-awareness tidak lagi return dump teknis mentah
-- Chatter null check — fallback ke LLM kalau tidak ada jawaban spesifik
-- Classifier detect termux commands dengan benar
+**Bug Fixes:**
+- Output checker/verifier no longer leaks to Telegram
+- Self-awareness no longer returns raw technical dumps
+- Chatter null check — fallback to LLM if no specific answer found
+- Classifier correctly detects termux commands
 
 ---
 
-## 🗺️ Roadmap menuju v1.0
+## 🗺️ Roadmap to v1.0
 
-Project ini aktif dikembangkan menuju **v1.0 stable release**. Yang sedang dan akan dikerjakan:
+This project is actively being developed toward a **v1.0 stable release**. Currently being worked on:
 
-- [ ] Stabilisasi semua fitur yang ada
-- [ ] Self-improvement loop — SI BABU bisa edit kodenya sendiri
-- [ ] Scheduled tasks — jalanin task otomatis terjadwal
+- [ ] Stabilize all existing features
+- [ ] Self-improvement loop — SI BABU can edit its own code
+- [ ] Scheduled tasks — run tasks automatically on schedule
 - [ ] Voice input via Termux:API microphone
-- [ ] Web UI (opsional)
-- [ ] Dokumentasi lengkap per modul
+- [ ] Web UI (optional)
+- [ ] Complete documentation per module
 - [ ] Test coverage
 
-Kalau lo mau ikut kontribusi atau punya ide fitur, buka Issue atau Pull Request — semua masukan sangat diterima!
-
+If you want to contribute or have feature ideas, open an Issue or Pull Request — all feedback is welcome!
 
 ---
 
-## 🔄 Update SI BABU
+## 🔄 Updating SI BABU
 
-SI BABU punya fitur auto-update bawaan. Ada 2 cara update:
+SI BABU has a built-in auto-update feature. There are 2 ways to update:
 
-### Cara 1 — Update via Command (Recommended)
-Langsung ketik di dalam SI BABU:
+### Method 1 — Update via Command (Recommended)
+Type directly in SI BABU:
 
     update
 
-SI BABU akan otomatis:
-1. Cek apakah ada versi terbaru di GitHub
-2. Download update terbaru
-3. Install dependencies baru kalau ada
-4. Kasih tau kalau update berhasil
+SI BABU will automatically:
+1. Check if there's a newer version on GitHub
+2. Download the latest update
+3. Install any new dependencies
+4. Tell you when the update is successful
 
-Setelah update, restart SI BABU:
+After updating, restart SI BABU:
 
     exit
     npm start
 
-### Cara 2 — Update Manual via Git
+### Method 2 — Update Manually via Git
 
     cd si-babu
     git pull origin main
     npm install
     npm start
 
-### Auto Notif Update
-Setiap kali `npm start`, SI BABU otomatis cek update di background. Kalau ada versi baru, akan muncul notifikasi kuning di atas:
+### Auto Update Notification
+Every time you run `npm start`, SI BABU automatically checks for updates in the background. If there's a new version, a yellow notification appears at the top:
 
     ╔══════════════════════════════════════════════╗
-    ║  🆕 UPDATE TERSEDIA!                         ║
+    ║  🆕 UPDATE AVAILABLE!                        ║
     ╚══════════════════════════════════════════════╝
-    Ketik "update" untuk update otomatis
+    Type "update" for automatic update
 
-> **Catatan:** Pastikan koneksi internet aktif saat update. Data dan konfigurasi (.env) tidak akan terhapus saat update.
-
+> **Note:** Make sure you have an active internet connection when updating. Your data and configuration (.env) will not be deleted during updates.
 
 ---
 
-## 📢 Catatan Update — Browsing Real-time (v0.9.1)
+## 📢 Update Note — Real-time Browsing (v0.9.1)
 
-Minta maaf untuk pengguna yang sebelumnya mencoba fitur browsing real-time SI BABU — fitur ini sebelumnya tidak berfungsi dengan baik dan sering memberikan jawaban tidak akurat atau tidak bisa menemukan data sama sekali.
+Apologies to users who previously tried SI BABU's real-time browsing feature — this feature previously didn't work well and often gave inaccurate answers or couldn't find information.
 
-**Update v0.9.1 memperbaiki ini sepenuhnya:**
-- Sekarang SI BABU benar-benar fetch konten dari website secara langsung
-- Hasil lebih akurat dengan data spesifik (harga, angka, fakta)
-- Menyebutkan sumber informasi
-- Cache 30 menit biar tidak fetch ulang untuk pertanyaan yang sama
+**Update v0.9.1 fixes this completely:**
+- SI BABU now truly fetches content from websites directly
+- Results are more accurate with specific data (prices, numbers, facts)
+- Mentions information sources
+- 30-minute cache to avoid refetching for the same questions
 
-Contoh yang sekarang sudah bisa:
+Examples that now work:
 
-    harga emas sekarang?
-    kurs dollar hari ini
-    berita terbaru tentang AI
-    cuaca jakarta hari ini
-    harga bitcoin sekarang
+    what's the gold price now?
+    what's the dollar exchange rate today?
+    latest news about AI
+    what's the weather in Jakarta?
+    what's the bitcoin price right now?
 
 ---
